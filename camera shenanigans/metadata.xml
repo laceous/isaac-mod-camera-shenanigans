@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <name>Camera Shenanigans</name>
+    <directory>camera shenanigans</directory>
+    <id>3253156459</id>
+    <description>This mod requires REPENTOGON. It allows you to move the camera around when the game is paused. Note: this only works in large rooms.
+
+There's 2 ways to interact with this mod:
+[list]
+    [*]Press the tilde key to open the new debug console and menu. There's a new Shenanigans option that will let you move the camera around the room.
+    [*]Press Esc/Start to pause the game. On keyboard, player 1 can use WASD to move the camera. On controller, player 1 can use the right thumbstick to move the camera. You can also use your mouse to click on different parts of the room. If you don't have a cursor then enable Mouse Control via Repentogon's Game Options (and restart the game). Recommendation: install a minimal pause menu mod so you can actually see the room when paused.
+[/list]
+
+Minimal pause menu mods (search the workshop for more):
+[list]
+    [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2802678835]Mini pause menu[/url]
+    [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2802679084]Mini pause menu+[/url]
+    [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2769063897]unintrusive pause menu[/url]
+    [*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2820930551]Inscryption Pause Menu[/url]
+[/list]</description>
+    <version>1.1</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Rooms"/>
+    <tag id="Tweaks"/>
+</metadata>
