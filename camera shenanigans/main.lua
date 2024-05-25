@@ -2,8 +2,8 @@ local mod = RegisterMod('Camera Shenanigans', 1)
 local game = Game()
 
 if REPENTOGON then
-  mod.lastMousePosition = nil -- Vector
   mod.lastPauseMenuState = PauseMenuStates.CLOSED -- OPEN, OPTIONS
+  mod.wasLeftMouseBtnPressed = false
   mod.sliderPercent = {
     h = 0.5,
     v = 0.5
@@ -17,86 +17,88 @@ if REPENTOGON then
   
   -- handle pause menu input: mouse clicks, keyboard/thumbstick for player 1
   function mod:onRenderInput()
-    if game:IsPaused() and game:GetPauseMenuState() == PauseMenuStates.OPEN then
+    local pauseMenuState = game:GetPauseMenuState()
+    
+    if game:IsPaused() and pauseMenuState == PauseMenuStates.OPEN then
       if mod.lastPauseMenuState == PauseMenuStates.CLOSED then
-        mod:setCameraByPlayer(0) -- normalize the camera so we know where it's at
+        mod:setCameraByPlayer(0) -- set the camera so we know where it's at
       end
       
       if not ImGui.IsVisible() then
         if Input.IsMouseBtnPressed(Mouse.MOUSE_BUTTON_LEFT) then
-          local pos = Input.GetMousePosition(true)
-          mod.lastMousePosition = Vector(pos.X, pos.Y)
+          mod.wasLeftMouseBtnPressed = true
         else
-          if mod.lastMousePosition then -- clicked and released
-            mod:setCamera(mod.lastMousePosition.X, mod.lastMousePosition.Y, true)
-          else
-            local keyboard = 0
-            local ci = game:GetPlayer(0).ControllerIndex
-            
-            local left, right, up, down
-            
-            if ci == keyboard then
-              -- wasd
-              left = Input.GetActionValue(ButtonAction.ACTION_LEFT, ci)
-              right = Input.GetActionValue(ButtonAction.ACTION_RIGHT, ci)
-              up = Input.GetActionValue(ButtonAction.ACTION_UP, ci)
-              down = Input.GetActionValue(ButtonAction.ACTION_DOWN, ci)
-            elseif ci > keyboard then -- controller
-              local a = 4
-              local b = 5
-              local x = 6
-              local y = 7
-              
-              -- right thumbstick only, exclude face buttons
-              if not Input.IsButtonPressed(a, ci) and
-                 not Input.IsButtonPressed(b, ci) and
-                 not Input.IsButtonPressed(x, ci) and
-                 not Input.IsButtonPressed(y, ci)
-              then
-                -- 0.0 to 1.0
-                left = Input.GetActionValue(ButtonAction.ACTION_SHOOTLEFT, ci)
-                right = Input.GetActionValue(ButtonAction.ACTION_SHOOTRIGHT, ci)
-                up = Input.GetActionValue(ButtonAction.ACTION_SHOOTUP, ci)
-                down = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN, ci)
-              end
-            end
-            
-            if left and right and up and down then
-              local h = 0.0
-              local v = 0.0
-              local speed = 0.015
-              
-              if left > 0.0 then
-                h = h - (speed * left)
-              end
-              if right > 0.0 then
-                h = h + (speed * right)
-              end
-              if up > 0.0 then
-                v = v - (speed * up)
-              end
-              if down > 0.0 then
-                v = v + (speed * down)
-              end
-              
-              if h ~= 0.0 or v ~= 0.0 then
-                mod.sliderPercent.h = math.max(0.25, math.min(mod.sliderPercent.h + h, 0.75))
-                mod.sliderPercent.v = math.max(0.25, math.min(mod.sliderPercent.v + v, 0.75))
-                mod:setCameraBySliders(true)
-              end
-            end
+          if mod.wasLeftMouseBtnPressed then -- clicked and released
+            local pos = Input.GetMousePosition(true)
+            mod:setCamera(pos.X, pos.Y, true)
           end
           
-          mod.lastMousePosition = nil
+          mod.wasLeftMouseBtnPressed = false
+        end
+        
+        local keyboard = 0
+        local ci = game:GetPlayer(0).ControllerIndex
+        
+        local left, right, up, down
+        
+        if ci == keyboard then
+          -- wasd
+          left = Input.GetActionValue(ButtonAction.ACTION_LEFT, ci)
+          right = Input.GetActionValue(ButtonAction.ACTION_RIGHT, ci)
+          up = Input.GetActionValue(ButtonAction.ACTION_UP, ci)
+          down = Input.GetActionValue(ButtonAction.ACTION_DOWN, ci)
+        elseif ci > keyboard then -- controller
+          local a = 4
+          local b = 5
+          local x = 6
+          local y = 7
+          
+          -- right thumbstick only, exclude face buttons
+          if not Input.IsButtonPressed(a, ci) and
+             not Input.IsButtonPressed(b, ci) and
+             not Input.IsButtonPressed(x, ci) and
+             not Input.IsButtonPressed(y, ci)
+          then
+            -- 0.0 to 1.0
+            left = Input.GetActionValue(ButtonAction.ACTION_SHOOTLEFT, ci)
+            right = Input.GetActionValue(ButtonAction.ACTION_SHOOTRIGHT, ci)
+            up = Input.GetActionValue(ButtonAction.ACTION_SHOOTUP, ci)
+            down = Input.GetActionValue(ButtonAction.ACTION_SHOOTDOWN, ci)
+          end
+        end
+        
+        if left and right and up and down then
+          local h = 0.0
+          local v = 0.0
+          local speed = 0.015
+          
+          if left > 0.0 then
+            h = h - (speed * left)
+          end
+          if right > 0.0 then
+            h = h + (speed * right)
+          end
+          if up > 0.0 then
+            v = v - (speed * up)
+          end
+          if down > 0.0 then
+            v = v + (speed * down)
+          end
+          
+          if h ~= 0.0 or v ~= 0.0 then
+            mod.sliderPercent.h = math.max(0.25, math.min(mod.sliderPercent.h + h, 0.75))
+            mod.sliderPercent.v = math.max(0.25, math.min(mod.sliderPercent.v + v, 0.75))
+            mod:setCameraBySliders(true)
+          end
         end
       else
-        mod.lastMousePosition = nil
+        mod.wasLeftMouseBtnPressed = false
       end
     else
-      mod.lastMousePosition = nil
+      mod.wasLeftMouseBtnPressed = false
     end
     
-    mod.lastPauseMenuState = game:GetPauseMenuState()
+    mod.lastPauseMenuState = pauseMenuState
   end
   
   function mod:setCamera(x, y, updateSliders)
