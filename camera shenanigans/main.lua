@@ -9,9 +9,7 @@ if REPENTOGON then
     v = 0.5
   }
   
-  function mod:onRender()
-    mod:RemoveCallback(ModCallbacks.MC_MAIN_MENU_RENDER, mod.onRender)
-    mod:RemoveCallback(ModCallbacks.MC_POST_RENDER, mod.onRender)
+  function mod:onModsLoaded()
     mod:setupImGui()
   end
   
@@ -144,10 +142,13 @@ if REPENTOGON then
     mod.sliderPercent.v = v
   end
   
-  function mod:setupImGui()
+  function mod:setupImGuiMenu()
     if not ImGui.ElementExists('shenanigansMenu') then
       ImGui.CreateMenu('shenanigansMenu', '\u{f6d1} Shenanigans')
     end
+  end
+  
+  function mod:setupImGui()
     ImGui.AddElement('shenanigansMenu', 'shenanigansMenuItemCamera', ImGuiElement.MenuItem, '\u{f083} Camera Shenanigans')
     ImGui.CreateWindow('shenanigansWindowCamera', 'Camera Shenanigans')
     ImGui.LinkWindowToElement('shenanigansWindowCamera', 'shenanigansMenuItemCamera')
@@ -190,7 +191,7 @@ if REPENTOGON then
     end
   end
   
-  mod:AddCallback(ModCallbacks.MC_MAIN_MENU_RENDER, mod.onRender)
-  mod:AddCallback(ModCallbacks.MC_POST_RENDER, mod.onRender)
+  mod:setupImGuiMenu()
+  mod:AddCallback(ModCallbacks.MC_POST_MODS_LOADED, mod.onModsLoaded)
   mod:AddCallback(ModCallbacks.MC_POST_RENDER, mod.onRenderInput)
 end
